@@ -1,8 +1,9 @@
-FROM golang:1.20.6-alpine3.18 as builder
+FROM golang:1.23.3-alpine3.20 AS builder
 
 RUN apk add --no-cache \
         # Required for apptainer to find min go version
         bash \
+        binutils-gold \
         cryptsetup \
         gawk \
         gcc \
@@ -26,7 +27,7 @@ RUN git clone https://github.com/apptainer/apptainer.git \
     && make \
     && make install
 
-FROM alpine:3.18.2
+FROM alpine:3.20
 COPY --from=builder /usr/local/apptainer /usr/local/apptainer
 ENV PATH="/usr/local/apptainer/bin:$PATH" \
     APPTAINER_TMPDIR="/tmp-apptainer"
